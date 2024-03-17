@@ -6,11 +6,26 @@ export async function POST(request) {
 
   try {
     if (!name || !email) throw new Error('Name and Email required');
+
+    // Check if user already exists
+    const existingUser = await sql`
+      SELECT * FROM users WHERE name = ${name} AND email = ${email};
+    `;
+
+    if (existingUser.length > 0) {
+      throw new Error('User already exists');
+    }
+
+    // If user doesn't exist, insert into the database
     await sql`INSERT INTO users (name, email) VALUES (${name}, ${email});`;
   } catch (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    if (error.message.includes('duplicate key value violates unique constraint "users_name_key"')) {
+      return NextResponse.json({ error: 'User with this name already exists' }, { status: 400 });
+    } else {
+      return NextResponse.json({ error: error.message }, { status: 500 });
+    }
   }
 
-  const pets = await sql`SELECT * FROM users;`;
-  return NextResponse.json({ pets }, { status: 200 });
+  const users = await sql`SELECT * FROM users;`;
+  return NextResponse.json({ users }, { status: 200 });
 }
