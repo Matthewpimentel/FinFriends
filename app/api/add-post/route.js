@@ -3,30 +3,24 @@ import { NextResponse } from 'next/server';
 import { put } from "@vercel/blob";
 
 export async function POST(request) {
-    const { email, images, description } = await request.json(); // Parse JSON body
-  
+    const formData = await request.formData(); // Parse FormData
+    const email = formData.get('email');
+    const description = formData.get('description');
+    const images = formData.getAll('images'); // Get all uploaded images
+
     try {
-        if (!email || !images || !Array.isArray(images) || images.length === 0 || !description) {
-            throw new Error('Email, description, and a non-empty array of images required');
+        if (!email || !images || images.length === 0 || !description) {
+            throw new Error('Email, description, and at least one image required');
         }
-      
+
         // Generate image URLs and construct the imageurls array
         const imageurls = [];
         for (const image of images) {
-            if (image === null) {
-                continue; // Skip processing null images
-            }
-        
-            // Generate a unique filename for the image based on current date and time
-            const timestamp = new Date().toISOString().replace(/:/g, '-'); // Replace colons to make it safe for filenames
-            const imageName = `${timestamp}`;
-  
-            await put(`${email}/${imageName}`, "test", { access: 'public' });
-        
-            // Add the image URL to the 'imageurls' array
-            imageurls.push(`${email}/${imageName}`);
+                const uploadedFile = await put(`${email}/${image.name}`, image, { access: 'public' });
+                const imageUrl = uploadedFile.url; // Assuming put returns an object with url property
+                imageurls.push(imageUrl); // Push URL to the array
         }
-      
+
         // Insert data into the 'posts' table with the constructed imageurls array
         const result = await sql`
             INSERT INTO posts (user_email, description, imageurls)
@@ -37,9 +31,16 @@ export async function POST(request) {
             )
             RETURNING id;
         `;
-      
+
         return NextResponse.json({ success: true }, { status: 200 }); // Return success response
     } catch (error) {
         return NextResponse.json({ error: error.message }, { status: 500 }); // Return error response
     }
 }
+
+// Update config to handle FormData
+export const config = {
+    api: {
+        bodyParser: false, // Disable default bodyParser
+    },
+};

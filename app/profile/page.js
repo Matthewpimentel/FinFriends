@@ -3,10 +3,23 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0/client';
+import { list } from '@vercel/blob';
 
 export default function Profile() {
     const { user, error, isLoading } = useUser();
     const [posts, setPosts] = useState([]);
+
+    async function getBlobs() {
+        const {
+            folders: [firstFolder],
+            blobs: rootBlobs,
+          } = await list({ mode: 'folded' });
+           
+          const { folders, blobs } = await list({ mode: 'folded', prefix: "test" });
+          console.log(folders);
+    }
+
+    const test = getBlobs();
 
     useEffect(() => {
         const fetchPosts = async () => {
