@@ -7,7 +7,11 @@ export async function GET(request) {
         
         // Fetch comments from the specified post ID
         const result = await sql`
-            SELECT (comments->>'commentText') AS comment_text, (comments->>'commenterId') AS commenter_id
+            SELECT 
+                (comments->>'commentText') AS comment_text, 
+                (comments->>'commenterId') AS commenter_id,
+                (comments->>'timestamp') AS timestamp,
+                (comments->>'likes') AS likes
             FROM posts
             WHERE id = ${postId};
         `;
@@ -15,7 +19,9 @@ export async function GET(request) {
         // Extract comments from the SQL query result
         const comments = result.rows.map(row => ({
             commentText: row.comment_text,
-            commenterId: row.commenter_id
+            commenterId: row.commenter_id,
+            timestamp: row.timestamp,
+            likes: row.likes
         }));
 
         // Return the JSON response with the comments

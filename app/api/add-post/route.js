@@ -33,13 +33,15 @@ export async function POST(request) {
 
         // Insert data into the 'posts' table with the constructed imageurls array
         await sql`
-            INSERT INTO posts (user_id, description, imageurls)
-            VALUES (
-                ${userId},
-                ${description},
-                ${imageurls}
-            );
-        `;
+    INSERT INTO posts (user_id, description, imageurls, comments)
+    VALUES (
+        ${userId},
+        ${description},
+        ${imageurls},
+        ARRAY[]::jsonb[]
+    );
+`;
+    
 
         return NextResponse.json({ success: true }, { status: 200 }); // Return success response
     } catch (error) {

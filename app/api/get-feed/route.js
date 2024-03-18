@@ -32,6 +32,7 @@ export async function GET(request) {
             profilepicture: row.user_profilepicture
         }));
 
+
         // Return the JSON response with the posts
         return NextResponse.json({ posts }, { status: 200 });
     }

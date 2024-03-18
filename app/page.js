@@ -8,8 +8,12 @@ import { LuMessageSquare } from "react-icons/lu";
 
 
 export default function Home() {
-  const { user, error, isLoading } = useUser();
+  const { user, error} = useUser();
   const [feed, setFeed] = useState([]);
+  const [showComments, setShowComments] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [commentText, setCommentText] = useState('');
+
 
   useEffect(() => {
     const addProfile = async () => {
@@ -25,7 +29,7 @@ export default function Home() {
         }
       }
     };
-
+  
     const getFeed = async () => {
       try {
         const response = await axios.get("/api/get-feed", {
@@ -33,18 +37,37 @@ export default function Home() {
             email: user.email
           }
         });
-        setFeed(response.data.posts);
-      }
-      catch (error) {
+        // Sort the posts in ascending order based on date_added
+        const sortedFeed = response.data.posts.sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+        setFeed(sortedFeed);
+      } catch (error) {
         console.error('Error fetching feed:', error);
       }
     }
-
+  
     addProfile();
     getFeed();
-  }, [user]); // Call the effect whenever the user changes
+  }, [user]);
 
-  console.log()
+  const postComment = async (postId, commentText) => {
+    setIsLoading(true);
+    try{
+      await axios.post("/api/add-comment", {
+        email: user.email,
+        commentText: commentText,
+        postId: postId
+      });
+      setIsLoading(false);
+      // Optionally, you can reset the commentText state after posting
+      setCommentText('');
+    } catch(error) {
+      console.error('Error posting:', error.response);
+      setIsLoading(false);
+    }
+  }
+
+  console.log(feed);
+
   function timeAgo(dateString) {
     const date = new Date(dateString);
     const now = new Date();
@@ -73,7 +96,10 @@ export default function Home() {
     }
   }
 
-  console.log(feed);
+  function commentsToggle() {
+    setShowComments(prevState => !prevState);
+  }
+
   return (
     <main className="">
       <Nav />
@@ -84,7 +110,7 @@ export default function Home() {
               <div className='flex flex-row items-center'>
                 <img src={post.profilepicture} className="h-12 w-12 rounded-full m-4" alt="Profile Picture" />
                 <h1 className='rounded-full mr-2'>{post.name}</h1>
-                <FaCircle size={5}/>
+                <FaCircle size={5} />
                 <h1 className='ml-2'>{timeAgo(post.date_added)}</h1>
               </div>
               <img src={post.imageurls[0]} className="h-96 w-full object-cover rounded-lg" alt="Post Image" />
@@ -99,15 +125,37 @@ export default function Home() {
                   <span className="text-slate-200">{post.description}</span>
                 </h1>
               </div>
-              <div>
-                <h2>View all {post.comments.length} comments</h2>
-                <h2>Add a comment...</h2>
+              <div className='flex flex-col border-b-2'>
+                <button onClick={commentsToggle}>View all {post.comments.length} comments</button>
+                {showComments && post.comments.map((comment, index) => (
+                  <div key={index} className='flex flex-col'>
+                    <div className='flex flex-row items-center'>
+                      <img src={post.profilepicture} className="h-8 w-8 rounded-full m-4" alt="Profile Picture" />
+                      <h1 className='font-bold mr-2'>{post.name}</h1>
+                      <h1 className="text-slate-200">{comment.commentText}</h1>
+                    </div>
+                    <div className='flex flex-row items-center'>
+                      <h2 className='mr-3'>{timeAgo(comment.timestamp)}</h2>
+                      <h2 className='mr-3'>{comment.likes} likes</h2>
+                      <h2>Reply</h2>
+                    </div>
+                  </div>
+                ))}
+                <div className='grid grid-cols-3 mb-4'>
+                  <input placeholder='Add a comment...' value={commentText} onChange={e => setCommentText(e.target.value)} className='mr-1 col-span-2 text-black'></input>
+                  <button type="button" className="bg-gray-800 cursor-pointer" disabled={isLoading} onClick={() => postComment(post.id, commentText)}>
+                    <svg className={`animate-spin h-5 w-5 mr-3 ${isLoading ? 'inline-block' : 'hidden'}`} viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A8.014 8.014 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    {isLoading ? 'Posting...' : 'Post'}
+                  </button>
                 </div>
+              </div>
             </div>
           ))}
         </div>
       </div>
     </main>
   );
-
 }
