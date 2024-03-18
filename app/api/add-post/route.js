@@ -49,9 +49,3 @@ export async function POST(request) {
     }
 }
 
-// Update config to handle FormData
-export const config = {
-    api: {
-        bodyParser: false, // Disable default bodyParser
-    },
-};
