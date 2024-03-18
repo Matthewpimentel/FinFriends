@@ -4,7 +4,6 @@ import { FaCamera } from "react-icons/fa6";
 import Nav from "../nav";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import axios from "axios";
-import { put } from "@vercel/blob";
 
 export default function CreatePost() {
     const fileInputRefs = useRef([null, null, null, null]);

@@ -13,23 +13,32 @@ export async function POST(request) {
             throw new Error('Email, description, and at least one image required');
         }
 
+        // Fetch user ID from the 'users' table based on the email
+        const result = await sql`
+            SELECT id FROM users WHERE email = ${email};
+        `;
+        const userId = result.rows[0]?.id; // Retrieve the user ID
+
+        if (!userId) {
+            throw new Error('User not found');
+        }
+
         // Generate image URLs and construct the imageurls array
         const imageurls = [];
         for (const image of images) {
-                const uploadedFile = await put(`${email}/${image.name}`, image, { access: 'public' });
-                const imageUrl = uploadedFile.url; // Assuming put returns an object with url property
-                imageurls.push(imageUrl); // Push URL to the array
+            const uploadedFile = await put(`${email}/${image.name}`, image, { access: 'public' });
+            const imageUrl = uploadedFile.url; // Assuming put returns an object with url property
+            imageurls.push(imageUrl); // Push URL to the array
         }
 
         // Insert data into the 'posts' table with the constructed imageurls array
-        const result = await sql`
-            INSERT INTO posts (user_email, description, imageurls)
+        await sql`
+            INSERT INTO posts (user_id, description, imageurls)
             VALUES (
-                ${email},
+                ${userId},
                 ${description},
                 ${imageurls}
-            )
-            RETURNING id;
+            );
         `;
 
         return NextResponse.json({ success: true }, { status: 200 }); // Return success response
