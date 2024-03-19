@@ -13,6 +13,7 @@ export default function Home() {
   const [showComments, setShowComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [commentText, setCommentText] = useState('');
+  const [likedPosts, setLikedPosts] = useState([]);
 
 
   useEffect(() => {
@@ -66,6 +67,30 @@ export default function Home() {
     }
   }
 
+  const likePost = async (postId) => {
+    try {
+      await axios.post("/api/like-post", {
+        postId: postId,
+        email: user.email
+      });
+      setLikedPosts(prevLikedPosts => [...prevLikedPosts, postId]); // Add postId to likedPosts
+    } catch (error) {
+      console.error("Error liking:", error.response)
+    }
+  };
+
+  const unlikePost = async (postId) => {
+    try {
+      await axios.post("/api/unlike-post", {
+        postId: postId,
+        email: user.email
+      });
+      setLikedPosts(prevLikedPosts => prevLikedPosts.filter(id => id !== postId)); // Remove postId from likedPosts
+    } catch (error) {
+      console.error("Error unliking:", error.response)
+    }
+  };
+
   console.log(feed);
 
   function timeAgo(dateString) {
@@ -115,7 +140,8 @@ export default function Home() {
               </div>
               <img src={post.imageurls[0]} className="h-96 w-full object-cover rounded-lg" alt="Post Image" />
               <div className='flex flex-row p-3 gap-6'>
-                <FaRegHeart size={30} />
+              <FaRegHeart size={30} onClick={() => likedPosts.includes(post.id) ? unlikePost(post.id) : likePost(post.id)} className={likedPosts.includes(post.id) ? 'text-red-500 cursor-pointer' : 'cursor-pointer'} />
+
                 <LuMessageSquare size={30} />
               </div>
               <div>
@@ -128,7 +154,7 @@ export default function Home() {
               <div className='flex flex-col border-b-2'>
                 <button onClick={commentsToggle}>View all {post.comments.length} comments</button>
                 {showComments && post.comments.map((comment, index) => (
-                  <div key={index} className='flex flex-col'>
+                  <div key={index} className='flex flex-col border-b-2'>
                     <div className='flex flex-row items-center'>
                       <img src={post.profilepicture} className="h-8 w-8 rounded-full m-4" alt="Profile Picture" />
                       <h1 className='font-bold mr-2'>{post.name}</h1>
