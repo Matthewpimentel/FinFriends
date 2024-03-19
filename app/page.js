@@ -4,11 +4,10 @@ import Nav from "./nav";
 import axios from "axios";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { FaRegHeart, FaCircle } from "react-icons/fa6";
-import { LuMessageSquare } from "react-icons/lu";
 
 
 export default function Home() {
-  const { user, error} = useUser();
+  const { user, error } = useUser();
   const [feed, setFeed] = useState([]);
   const [showComments, setShowComments] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -30,29 +29,29 @@ export default function Home() {
         }
       }
     };
-  
-    const getFeed = async () => {
-      try {
-        const response = await axios.get("/api/get-feed", {
-          params: {
-            email: user.email
-          }
-        });
-        // Sort the posts in ascending order based on date_added
-        const sortedFeed = response.data.posts.sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
-        setFeed(sortedFeed);
-      } catch (error) {
-        console.error('Error fetching feed:', error);
-      }
-    }
-  
+
     addProfile();
     getFeed();
   }, [user]);
 
+  const getFeed = async () => {
+    try {
+      const response = await axios.get("/api/get-feed", {
+        params: {
+          email: user.email
+        }
+      });
+      // Sort the posts in ascending order based on date_added
+      const sortedFeed = response.data.posts.sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+      setFeed(sortedFeed);
+    } catch (error) {
+      console.error('Error fetching feed:', error);
+    }
+  }
+
   const postComment = async (postId, commentText) => {
     setIsLoading(true);
-    try{
+    try {
       await axios.post("/api/add-comment", {
         email: user.email,
         commentText: commentText,
@@ -61,7 +60,8 @@ export default function Home() {
       setIsLoading(false);
       // Optionally, you can reset the commentText state after posting
       setCommentText('');
-    } catch(error) {
+      getFeed();
+    } catch (error) {
       console.error('Error posting:', error.response);
       setIsLoading(false);
     }
@@ -77,6 +77,7 @@ export default function Home() {
     } catch (error) {
       console.error("Error liking:", error.response)
     }
+    getFeed();
   };
 
   const unlikePost = async (postId) => {
@@ -89,9 +90,8 @@ export default function Home() {
     } catch (error) {
       console.error("Error unliking:", error.response)
     }
+    getFeed();
   };
-
-  console.log(feed);
 
   function timeAgo(dateString) {
     const date = new Date(dateString);
@@ -136,16 +136,20 @@ export default function Home() {
                 <img src={post.profilepicture} className="h-12 w-12 rounded-full m-4" alt="Profile Picture" />
                 <h1 className='rounded-full mr-2'>{post.name}</h1>
                 <FaCircle size={5} />
-                <h1 className='ml-2'>{timeAgo(post.date_added)}</h1>
+                <h1 className='ml-2 mr-2'>{timeAgo(post.date_added)}</h1>
+                {post.following.includes(post.user_id) ? <button>Following</button> : <button>Follow</button>}
               </div>
               <img src={post.imageurls[0]} className="h-96 w-full object-cover rounded-lg" alt="Post Image" />
               <div className='flex flex-row p-3 gap-6'>
-              <FaRegHeart size={30} onClick={() => likedPosts.includes(post.id) ? unlikePost(post.id) : likePost(post.id)} className={likedPosts.includes(post.id) ? 'text-red-500 cursor-pointer' : 'cursor-pointer'} />
+                <FaRegHeart
+                  size={30}
+                  onClick={() => likedPosts.includes(post.id) ? unlikePost(post.id) : likePost(post.id)}
+                  className={(likedPosts.includes(post.id) || (post.likes && post.likes.includes(user.email))) ? 'text-red-500 cursor-pointer' : 'cursor-pointer'}
 
-                <LuMessageSquare size={30} />
+                />
               </div>
               <div>
-                <h1>{post.likes} likes</h1>
+                <h1>{post.likes ? post.likes.length : 0} likes</h1>
                 <h1>
                   <span className="font-bold mr-2">{post.name}</span>
                   <span className="text-slate-200">{post.description}</span>
@@ -162,7 +166,7 @@ export default function Home() {
                     </div>
                     <div className='flex flex-row items-center'>
                       <h2 className='mr-3'>{timeAgo(comment.timestamp)}</h2>
-                      <h2 className='mr-3'>{comment.likes} likes</h2>
+                      <h2 className='mr-3'>{comment.likes.length} likes</h2>
                       <h2>Reply</h2>
                     </div>
                   </div>

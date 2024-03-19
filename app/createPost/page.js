@@ -40,7 +40,6 @@ export default function CreatePost() {
                 
                 // Append each image file to formData
                 selectedImages.forEach((image, index) => {
-                    console.log(image !==null);
                     if (image !== null) {
                         formData.append(`images`, image);
                         console.log(image);

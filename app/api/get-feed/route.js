@@ -8,7 +8,7 @@ export async function GET(request) {
         
         // Fetch posts from users being followed
         const result = await sql`
-            SELECT p.*, u.name AS user_name, u.email AS user_email, u.profilepicture AS user_profilepicture
+            SELECT p.*, u.name AS user_name, u.email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following
             FROM posts p
             JOIN users u ON u.id = p.user_id
             WHERE p.user_id IN (
@@ -29,7 +29,8 @@ export async function GET(request) {
             email: row.user_email,
             name: row.user_name,
             likes: row.likes,
-            profilepicture: row.user_profilepicture
+            profilepicture: row.user_profilepicture,
+            following: row.user_following
         }));
 
 
