@@ -13,7 +13,7 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [commentText, setCommentText] = useState('');
   const [likedPosts, setLikedPosts] = useState([]);
-
+  const [showFullDescription, setShowFullDescription] = useState(false);
 
   useEffect(() => {
     const addProfile = async () => {
@@ -41,7 +41,6 @@ export default function Home() {
           email: user.email
         }
       });
-      // Sort the posts in ascending order based on date_added
       const sortedFeed = response.data.posts.sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
       setFeed(sortedFeed);
     } catch (error) {
@@ -58,7 +57,6 @@ export default function Home() {
         postId: postId
       });
       setIsLoading(false);
-      // Optionally, you can reset the commentText state after posting
       setCommentText('');
       getFeed();
     } catch (error) {
@@ -73,7 +71,7 @@ export default function Home() {
         postId: postId,
         email: user.email
       });
-      setLikedPosts(prevLikedPosts => [...prevLikedPosts, postId]); // Add postId to likedPosts
+      setLikedPosts(prevLikedPosts => [...prevLikedPosts, postId]);
     } catch (error) {
       console.error("Error liking:", error.response)
     }
@@ -86,7 +84,7 @@ export default function Home() {
         postId: postId,
         email: user.email
       });
-      setLikedPosts(prevLikedPosts => prevLikedPosts.filter(id => id !== postId)); // Remove postId from likedPosts
+      setLikedPosts(prevLikedPosts => prevLikedPosts.filter(id => id !== postId));
     } catch (error) {
       console.error("Error unliking:", error.response)
     }
@@ -125,34 +123,55 @@ export default function Home() {
     setShowComments(prevState => !prevState);
   }
 
+  function truncateDescription(description, limit) {
+    const words = description.split(' ');
+    if (words.length > limit) {
+      return words.slice(0, limit).join(' ');
+    }
+    return description;
+  }
+
+  const toggleDescription = () => {
+    setShowFullDescription(!showFullDescription);
+  };
+
   return (
     <main className="">
       <Nav />
       <div className='flex flex-col justify-center items-center'>
-        <div className='flex flex-col justify-center items-center w-1/2 mx-auto'>
+        <div className='flex flex-col justify-center items-center '>
           {feed.map((post) => (
-            <div key={post.id} className='flex flex-col w-7/12 border-b-2'>
+            <div key={post.id} className='flex flex-col w-9/12 md:w-7/12 border-b-2 max-w-4xl'>
               <div className='flex flex-row items-center'>
-                <img src={post.profilepicture} className="h-12 w-12 rounded-full m-4" alt="Profile Picture" />
-                <h1 className='rounded-full mr-2'>{post.name}</h1>
+                <img src={post.profilepicture} className="h-10 w-10 rounded-full m-4" alt="Profile Picture" />
+                <h1 className='rounded-full w-2/6 mr-1 text-xs md:text-base'>{post.name}</h1>
                 <FaCircle size={5} />
-                <h1 className='ml-2 mr-2'>{timeAgo(post.date_added)}</h1>
+                <h1 className='ml-1 mr-1 text-xs w-2/6 md:text-base'>{timeAgo(post.date_added)}</h1>
                 {post.following.includes(post.user_id) ? <button>Following</button> : <button>Follow</button>}
               </div>
-              <img src={post.imageurls[0]} className="h-96 w-full object-cover rounded-lg" alt="Post Image" />
-              <div className='flex flex-row p-3 gap-6'>
+              <img src={post.imageurls[0]} className="object-cover rounded-lg" alt="Post Image" />
+              <div className='flex flex-row p-2'>
                 <FaRegHeart
-                  size={30}
                   onClick={() => likedPosts.includes(post.id) ? unlikePost(post.id) : likePost(post.id)}
-                  className={(likedPosts.includes(post.id) || (post.likes && post.likes.includes(user.email))) ? 'text-red-500 cursor-pointer' : 'cursor-pointer'}
-
+                  className={(likedPosts.includes(post.id) || (post.likes && post.likes.includes(user.email))) ? 'text-red-500 cursor-pointer text-xl md:text-2xl' : 'text-xl md:text-2xl'}
                 />
               </div>
               <div>
-                <h1>{post.likes ? post.likes.length : 0} likes</h1>
+                <h1 className='text-sm md:text-base'>{post.likes ? post.likes.length : 0} likes</h1>
                 <h1>
-                  <span className="font-bold mr-2">{post.name}</span>
-                  <span className="text-slate-200">{post.description}</span>
+                  <span className="font-bold mr-2 text-sm md:text-base">{post.name}</span>
+                  {/* Render truncated or full description based on showFullDescription state */}
+                  <span className={`text-slate-200`}>
+                    {truncateDescription(post.description, 15)}
+                    <span className={`text-slate-200 transition-opacity duration-500 ${showFullDescription ? 'opacity-100' : 'opacity-0'} `}>
+                    {showFullDescription ? post.description : <span></span>}
+                    </span>
+                    {post.description.split(' ').length > 15 && (
+                      <button onClick={toggleDescription} className="text-slate-600 ml-1 focus:outline-none">
+                        {showFullDescription ? '...less' : '...more'}
+                      </button>
+                    )}
+                  </span>
                 </h1>
               </div>
               <div className='flex flex-col border-b-2'>

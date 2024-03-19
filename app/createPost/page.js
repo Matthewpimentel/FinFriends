@@ -8,7 +8,6 @@ import axios from "axios";
 export default function CreatePost() {
     const fileInputRefs = useRef([null, null, null, null]);
     const [selectedImages, setSelectedImages] = useState([null, null, null, null]);
-    const [selectedImagesBlob, setSelectedImagesBlob] = useState([null, null, null, null]);
     const { user, error, isLoading } = useUser();
     const [description, setDescription] = useState("");
     const [selectedImages2, setSelectedImages2] = useState([null, null, null, null]);
@@ -66,36 +65,36 @@ export default function CreatePost() {
             <input
                 ref={el => fileInputRefs.current[0] = el}
                 type="file"
-                style={{ display: 'none' }}
+                className='hidden'
                 accept="image/*" // Only accept image files
                 onChange={(e) => handleFileChange(0, e)}
             />
             <input
                 ref={el => fileInputRefs.current[1] = el}
                 type="file"
-                style={{ display: 'none' }}
+                className='hidden'
                 accept="image/*" // Only accept image files
                 onChange={(e) => handleFileChange(1, e)}
             />
             <input
                 ref={el => fileInputRefs.current[2] = el}
                 type="file"
-                style={{ display: 'none' }}
+                className='hidden'
                 accept="image/*" // Only accept image files
                 onChange={(e) => handleFileChange(2, e)}
             />
             <input
                 ref={el => fileInputRefs.current[3] = el}
-                type="file"
-                style={{ display: 'none' }}
+                type="file"c
+                className='hidden'
                 accept="image/*" // Only accept image files
                 onChange={(e) => handleFileChange(3, e)}
             />
-            <div className="flex justify-center">
-                <div className="flex flex-row">
+            <div className="flex justify-center items-center">
+                <div className="flex flex-col md:flex-row">
                     {selectedImages2.map((image, index) => (
                         <div key={index} className="flex justify-center items-center border border-gray-800 rounded-lg p-4 mt-4 w-64 h-64 mr-4" onClick={() => handleCameraClick(index)}>
-                            {image ? <img src={image} alt={`Image ${index}`} style={{ maxWidth: '100%', maxHeight: '100%' }} /> : <FaCamera size={70} color='' />}
+                            {image ? <img src={image} alt={`Image ${index}`} style={{ maxWidth: '100%', maxHeight: '100%' }} /> : <FaCamera size={60} color='' />}
                         </div>
                     ))}
                 </div>
@@ -103,7 +102,7 @@ export default function CreatePost() {
             <div className="flex justify-center">
                 <div className="flex flex-col">
                 <input 
-    className="mt-4 px-4 py-2 border border-gray-400 rounded-md placeholder-gray-500 text-black" 
+    className="mt-4 px-4 py-2 border border-gray-400 rounded-md placeholder-gray-500 text-black mb-4" 
     placeholder="Description" 
     value={description} // Add this line to ensure the input reflects the state value
     onChange={(e) => setDescription(e.target.value)}
