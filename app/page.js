@@ -4,6 +4,8 @@ import Nav from "./nav";
 import axios from "axios";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { FaRegHeart, FaCircle } from "react-icons/fa6";
+import "react-responsive-carousel/lib/styles/carousel.min.css"; // requires a loader
+import { Carousel } from 'react-responsive-carousel';
 
 
 export default function Home() {
@@ -126,7 +128,7 @@ export default function Home() {
   function truncateDescription(description, limit) {
     const words = description.split(' ');
     if (words.length > limit) {
-      return words.slice(0, limit).join(' ');
+      return words.slice(0, limit).join(' ') + ' '; // Add space at the end
     }
     return description;
   }
@@ -141,7 +143,7 @@ export default function Home() {
       <div className='flex flex-col justify-center items-center'>
         <div className='flex flex-col justify-center items-center '>
           {feed.map((post) => (
-            <div key={post.id} className='flex flex-col w-9/12 md:w-7/12 border-b-2 max-w-4xl'>
+            <div key={post.id} className='flex flex-col w-9/12 md:w-7/12 max-w-4xl bg-gray-800 p-2 mb-4 mt-4 rounded'>
               <div className='flex flex-row items-center'>
                 <img src={post.profilepicture} className="h-10 w-10 rounded-full m-4" alt="Profile Picture" />
                 <h1 className='rounded-full w-2/6 mr-1 text-xs md:text-base'>{post.name}</h1>
@@ -149,11 +151,17 @@ export default function Home() {
                 <h1 className='ml-1 mr-1 text-xs w-2/6 md:text-base'>{timeAgo(post.date_added)}</h1>
                 {post.following.includes(post.user_id) ? <button>Following</button> : <button>Follow</button>}
               </div>
-              <img src={post.imageurls[0]} className="object-cover rounded-lg" alt="Post Image" />
+              <Carousel showStatus={false} showThumbs={false}>
+                {post.imageurls.map((image, index) => (
+                  <div key={index} className="w-full h-4/5 flex items-center justify-center">
+                    <img src={image} className="object-contai max-h-full max-w-full" />
+                  </div>
+                ))}
+              </Carousel>
               <div className='flex flex-row p-2'>
                 <FaRegHeart
                   onClick={() => likedPosts.includes(post.id) ? unlikePost(post.id) : likePost(post.id)}
-                  className={(likedPosts.includes(post.id) || (post.likes && post.likes.includes(user.email))) ? 'text-red-500 cursor-pointer text-xl md:text-2xl' : 'text-xl md:text-2xl'}
+                  className={(likedPosts.includes(post.id) || (post.likes && post.likes.includes(user.email))) ? 'text-red-500 cursor-pointer text-xl md:text-2xl' : 'text-xl md:text-2xl cursor-pointer'}
                 />
               </div>
               <div>
@@ -164,7 +172,7 @@ export default function Home() {
                   <span className={`text-slate-200`}>
                     {truncateDescription(post.description, 15)}
                     <span className={`text-slate-200 transition-opacity duration-500 ${showFullDescription ? 'opacity-100' : 'opacity-0'} `}>
-                    {showFullDescription ? post.description : <span></span>}
+                      {showFullDescription ? post.description : <span></span>}
                     </span>
                     {post.description.split(' ').length > 15 && (
                       <button onClick={toggleDescription} className="text-slate-600 ml-1 focus:outline-none">
@@ -174,7 +182,7 @@ export default function Home() {
                   </span>
                 </h1>
               </div>
-              <div className='flex flex-col border-b-2'>
+              <div className='flex flex-col '>
                 <button onClick={commentsToggle}>View all {post.comments.length} comments</button>
                 {showComments && post.comments.map((comment, index) => (
                   <div key={index} className='flex flex-col border-b-2'>
