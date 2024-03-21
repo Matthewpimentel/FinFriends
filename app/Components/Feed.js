@@ -15,11 +15,13 @@ const [commentText, setCommentText] = useState('');
 const [likedPosts, setLikedPosts] = useState([]);
 const [showFullDescription, setShowFullDescription] = useState(false);
 const [showComments, setShowComments] = useState({});
+const [userId, setUserId] = useState();
 
 useEffect(() => {
   
   getFeed();
 }, [user]);
+
 
 const getFeed = async () => {
   try {
@@ -28,7 +30,10 @@ const getFeed = async () => {
         email: user.email
       }
     });
-    const sortedFeed = response.data.posts.sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
+    
+    const { userId, posts } = response.data; // Extract userId from response
+
+    const sortedFeed = posts.sort((a, b) => new Date(b.date_added) - new Date(a.date_added));
     setFeed(sortedFeed);
     // Initialize showComments state for each post
     const initialShowCommentsState = {};
@@ -36,10 +41,15 @@ const getFeed = async () => {
       initialShowCommentsState[post.id] = false;
     });
     setShowComments(initialShowCommentsState);
+
+    // Now you have access to userId
+    setUserId(userId);
   } catch (error) {
     console.error('Error fetching feed:', error);
   }
 }
+
+console.log(feed);
 
 
 const postComment = async (postId, commentText) => {
@@ -58,8 +68,6 @@ const postComment = async (postId, commentText) => {
     setIsLoading(false);
   }
 }
-
-console.log(feed)
 
 const likePost = async (postId) => {
   try {
@@ -144,7 +152,7 @@ const toggleDescription = () => {
                 <h1 className='rounded-full w-2/6 mr-1 text-xs md:text-base'>{post.username}</h1>
                 <FaCircle size={5} />
                 <h1 className='ml-1 mr-1 text-xs w-2/6 md:text-base'>{timeAgo(post.date_added)}</h1>
-                {post.following.includes(post.user_id) ? <button>Following</button> : <button>Follow</button>}
+                {post.followers.includes(userId) ? <button class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">Following</button> : <button class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">Follow</button>}
               </div>
               <Carousel showStatus={false} showThumbs={false}>
                 {post.imageurls.map((image, index) => (
