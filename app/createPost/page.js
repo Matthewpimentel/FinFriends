@@ -94,7 +94,7 @@ export default function CreatePost() {
                 <div className="flex flex-col md:flex-row">
                     {selectedImages2.map((image, index) => (
                         <div key={index} className="flex justify-center items-center border border-gray-800 rounded-lg p-4 mt-4 w-64 h-64 mr-4" onClick={() => handleCameraClick(index)}>
-                            {image ? <img src={image} alt={`Image ${index}`} style={{ maxWidth: '100%', maxHeight: '100%' }} /> : <FaCamera size={60} color='' />}
+                            {image ? <img src={image} alt={`Image ${index}`} style={{ maxWidth: '100%', maxHeight: '100%' }} /> : <FaCamera size={70} color='' />}
                         </div>
                     ))}
                 </div>

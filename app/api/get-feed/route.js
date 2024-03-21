@@ -8,7 +8,7 @@ export async function GET(request) {
         
         // Fetch posts from users being followed
         const result = await sql`
-            SELECT p.*, u.name AS user_name, u.email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following
+            SELECT p.*, u.name AS user_name, u.email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following, u.username AS user_username
             FROM posts p
             JOIN users u ON u.id = p.user_id
             WHERE p.user_id IN (
@@ -30,14 +30,32 @@ export async function GET(request) {
             name: row.user_name,
             likes: row.likes,
             profilepicture: row.user_profilepicture,
-            following: row.user_following
+            following: row.user_following,
+            username: row.user_username
         }));
 
+        // Iterate over posts and fetch commenter information
+        for (const post of posts) {
+            for (const comment of post.comments) {
+                const commenterId = comment.commenterId;
+                const commenterResult = await sql`
+                    SELECT profilepicture, username
+                    FROM users
+                    WHERE id = ${commenterId};
+                `;
+                const commenter = commenterResult.rows[0];
+                if (commenter) {
+                    comment.commenter = {
+                        profilepicture: commenter.profilepicture,
+                        username: commenter.username
+                    };
+                }
+            }
+        }
 
         // Return the JSON response with the posts
         return NextResponse.json({ posts }, { status: 200 });
-    }
-    catch (error) {
+    } catch (error) {
         // Handle errors and return appropriate response
         return NextResponse.json({ error: error.message }, { status: 500 });
     }
