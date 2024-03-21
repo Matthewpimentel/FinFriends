@@ -95,6 +95,18 @@ const unlikePost = async (postId) => {
   getFeed();
 };
 
+const followUser = async (followerId) => {
+  try {
+    await axios.post("/api/follow-user", {
+      followerId: followerId,
+      userId: userId
+    });
+  } catch (error) {
+    console.error("Error following/unfollowing", error.response)
+  }
+  getFeed();
+}
+
 function timeAgo(dateString) {
   const date = new Date(dateString);
   const now = new Date();
@@ -141,6 +153,7 @@ function truncateDescription(description, limit) {
 const toggleDescription = () => {
   setShowFullDescription(!showFullDescription);
 };
+
     return(
         <main className="">
       <div className='flex flex-col justify-center items-center'>
@@ -152,7 +165,7 @@ const toggleDescription = () => {
                 <h1 className='rounded-full w-2/6 mr-1 text-xs md:text-base'>{post.username}</h1>
                 <FaCircle size={5} />
                 <h1 className='ml-1 mr-1 text-xs w-2/6 md:text-base'>{timeAgo(post.date_added)}</h1>
-                {post.followers.includes(userId) ? <button class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">Following</button> : <button class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium">Follow</button>}
+                {post.followers.includes(userId) ? <button class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={e => followUser(post.user_id)}>Following</button> : <button class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={e => followUser(post.user_id)}>Follow</button>}
               </div>
               <Carousel showStatus={false} showThumbs={false}>
                 {post.imageurls.map((image, index) => (

@@ -18,7 +18,7 @@ export async function GET(request) {
 
         // Fetch posts from users being followed
         const followingPostsResult = await sql`
-            SELECT p.*, u.name AS user_name, u.email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following, u.username AS user_username, u.followers AS user_followers
+            SELECT p.*, u.name AS user_name, u.email AS user_email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following, u.username AS user_username, u.followers AS user_followers
             FROM posts p
             JOIN users u ON u.id = p.user_id
             WHERE p.user_id IN (
@@ -47,7 +47,7 @@ export async function GET(request) {
 
         // Fetch posts from users not being followed, sorted by likes
         const notFollowingPostsResult = await sql`
-            SELECT p.*, u.name AS user_name, u.email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following, u.username AS user_username, u.followers AS user_followers
+            SELECT p.*, u.name AS user_name, u.email AS user_email, u.following AS user_email, u.profilepicture AS user_profilepicture, u.following AS user_following, u.username AS user_username, u.followers AS user_followers
             FROM posts p
             JOIN users u ON u.id = p.user_id
             WHERE p.user_id NOT IN (
