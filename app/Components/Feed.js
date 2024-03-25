@@ -235,8 +235,17 @@ const Feed = () => {
                 {showComments[post.id] && post.comments.map((comment, index) => (
                   <div key={index} className='flex flex-col border-b-2'>
                     <div className='flex flex-row items-center'>
+                    <Link href={{
+                  pathname: "/profile",
+                  query: {
+                    userId: comment.commenter.commenterId
+                  },
+                }}>
+                      <div className='flex items-center'>
                       <img src={comment.commenter.profilepicture} className="h-8 w-8 rounded-full m-4" alt="Profile Picture" />
                       <h1 className='font-bold mr-2'>{comment.commenter.username}</h1>
+                        </div>
+                      </Link>
                       <h1 className="text-slate-200">{comment.commentText}</h1>
                     </div>
                     <div className='flex flex-row items-center'>
