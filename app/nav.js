@@ -3,6 +3,7 @@
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 import Link from "next/link"
+import Search from './Components/Search';
 
 export default function Nav() {
     const { user, error, isLoading } = useUser();
@@ -46,6 +47,9 @@ export default function Nav() {
                                 <a href="/" class="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" aria-current="page">Explore</a>
                             </div>
                         </div>
+                    </div>
+                    <div>
+                        <Search/>
                     </div>
                     <div class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
                         <Link href="/createPost">
