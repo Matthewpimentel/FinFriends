@@ -1,5 +1,4 @@
 "use client"
-
 import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -8,7 +7,7 @@ import Nav from '../nav';
 export default function Profile({ searchParams }) {
     const { user, error, isLoading } = useUser();
     const [posts, setPosts] = useState([]);
-    const [userInfo, setUserInfo] = useState();
+    const [userInfo, setUserInfo] = useState(null); // Initialize userInfo as null
 
     useEffect(() => {
         const fetchPosts = async () => {
@@ -41,16 +40,21 @@ export default function Profile({ searchParams }) {
             }
         };
 
-            fetchPosts();
+        fetchPosts();
 
-    }, [user]);
+    }, []);
 
     console.log(userInfo)
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
-    const profilePicture = user ? user.picture : userInfo && userInfo[0] ? userInfo[0].profilepicture : '';
-    const username = user ? user.nickname : userInfo && userInfo[0] ? userInfo[0].username : '';
+
+    // Conditional rendering based on userInfo availability
+    const profilePicture = userInfo ? userInfo[0].profilepicture : (user ? user.picture : '');
+    const username = userInfo ? userInfo[0].username : (user ? user.nickname : '');
+    const followersCount = userInfo ? userInfo[0].followers.length : '';
+    const followingCount = userInfo ? userInfo[0].following.length : '';
+
     return (
         <div>
             <Nav />
@@ -65,8 +69,8 @@ export default function Profile({ searchParams }) {
                             <h1 className='mb-8'>{username}</h1>
                             <div className="flex flex-row items-center justify-center">
                                 <h3 className='mr-12'>{posts.length} Posts</h3>
-                                <h3 className='mr-12'>{`${userInfo[0].followers.length} Followers`}</h3>
-                                <h3 className='mr-12'>{`${userInfo[0].following.length} Following`}</h3>
+                                <h3 className='mr-12'>{`${followersCount} Followers`}</h3>
+                                <h3 className='mr-12'>{`${followingCount} Following`}</h3>
                             </div>
                         </div>
                     </div>
