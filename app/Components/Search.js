@@ -37,7 +37,7 @@ const Search = () => {
             <div className='flex fixed  bg-gray-800 w-3/12'>
                 <ul>
                     {searchResults.map(user => (
-                        <Link href={{
+                        <Link key={user.id} href={{
                             pathname: "/profile",
                             query: {
                                 userId: user.id
