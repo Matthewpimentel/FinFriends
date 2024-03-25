@@ -5,8 +5,11 @@ export async function POST(request) {
   try {
     const { followerId, userId } = await request.json();
 
+    console.log(userId);
+
     // Check if the follower is already following the user
     const isFollowing = await isUserFollowing(followerId, userId);
+
 
     if (isFollowing) {
       // If already following, unfollow the user

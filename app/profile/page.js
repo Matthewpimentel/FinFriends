@@ -8,43 +8,71 @@ export default function Profile({ searchParams }) {
     const { user, error, isLoading } = useUser();
     const [posts, setPosts] = useState([]);
     const [userInfo, setUserInfo] = useState(null); // Initialize userInfo as null
+    const [userId, setUserId] = useState();
 
     useEffect(() => {
-        const fetchPosts = async () => {
-            if (!searchParams.userId) {
-                try {
-                    if (user && user.email) {
-                        const response = await axios.get("/api/get-user-posts", {
-                            params: {
-                                email: user.email,
-                            },
-                        });
-                        setPosts(response.data.posts.rows);
-                    }
-                } catch (error) {
-                    console.error('Error fetching posts:', error.response.data);
-                }
-            }
-            else {
-                try {
-                    const response = await axios.get("/api/get-other-user-posts", {
+
+        fetchPosts();
+        if(user) {
+            getUserId();
+        }
+    }, []);
+
+    const fetchPosts = async () => {
+        if (!searchParams.userId) {
+            try {
+                if (user && user.email) {
+                    const response = await axios.get("/api/get-user-posts", {
                         params: {
-                            userId: searchParams.userId
+                            email: user.email,
                         },
                     });
                     setPosts(response.data.posts.rows);
-                    setUserInfo(response.data.userInfo.rows);
-                } catch (error) {
-                    console.error('Error fetching posts:', error);
                 }
+            } catch (error) {
+                console.error('Error fetching posts:', error.response.data);
             }
-        };
+        }
+        else {
+            try {
+                const response = await axios.get("/api/get-other-user-posts", {
+                    params: {
+                        userId: searchParams.userId
+                    },
+                });
+                setPosts(response.data.posts.rows);
+                setUserInfo(response.data.userInfo.rows);
+            } catch (error) {
+                console.error('Error fetching posts:', error);
+            }
+        }
+    };
 
+    const getUserId = async () => {
+        const response = await axios.get("/api/get-user-id", {
+            params: {
+                username: user.user_metadata.username
+            }
+        });
+        setUserId(response.data);
+        return response;
+    }
+
+    const getUserIdAndFollow = async () => {
+        try {
+             // This may still log the previous value of userId due to asynchronous state updates
+            await axios.post("/api/follow-user", {
+                followerId: searchParams.userId,
+                userId: userId.userId // Use the response data directly
+            });
+        } catch(error) {
+            console.error("Error following/unfollowing", error.response);
+        }
         fetchPosts();
+    };
 
-    }, []);
-
-    console.log(userInfo)
+    
+    
 
     if (isLoading) return <div>Loading...</div>;
     if (error) return <div>{error.message}</div>;
@@ -54,7 +82,14 @@ export default function Profile({ searchParams }) {
     const username = userInfo ? userInfo[0].username : (user ? user.nickname : '');
     const followersCount = userInfo ? userInfo[0].followers.length : '';
     const followingCount = userInfo ? userInfo[0].following.length : '';
-
+    const followButton = userInfo && userId ? (
+        userInfo[0].followers.includes(userId.userId) ? ( // Check if the logged-in user is already following
+            <button className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Unfollow</button>
+        ) : (
+            <button className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Follow</button>
+        )
+    ) : null;
+    
     return (
         <div>
             <Nav />
@@ -66,7 +101,10 @@ export default function Profile({ searchParams }) {
                             <img className="h-30 w-30 rounded-full" src={profilePicture} alt={username} />
                         </div>
                         <div>
-                            <h1 className='mb-8'>{username}</h1>
+                            <div className='flex flex-row items-center'>
+                                <h1 className='mb-8'>{username}</h1>
+                                {followButton}
+                            </div>
                             <div className="flex flex-row items-center justify-center">
                                 <h3 className='mr-12'>{posts.length} Posts</h3>
                                 <h3 className='mr-12'>{`${followersCount} Followers`}</h3>

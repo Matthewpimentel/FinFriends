@@ -4,11 +4,16 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import { useState } from 'react';
 import Link from "next/link"
 import Search from './Components/Search';
+import { useRouter } from 'next/navigation';
 
 export default function Nav() {
     const { user, error, isLoading } = useUser();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const router = useRouter();
+    const handleRefresh = () => {
+        router.reload();
+      };
 
     const toggleMenu = () => {
         if(isMobileMenuOpen) {
@@ -92,7 +97,7 @@ export default function Nav() {
                                     onMouseEnter={() => setIsMenuOpen(true)}
                                     onMouseLeave={() => setIsMenuOpen(false)}
                                 >
-                                    <Link href="/profile" key="Profile">
+                                    <Link href="/profile" key="Profile" onClick={() => handleRefresh()}>
                                         <p className="block px-4 py-2 text-sm text-gray-700 " role="menuitem" tabIndex="-1" id="user-menu-item-1">Your Profile</p>
                                     </Link>
                                     <Link href="/api/auth/logout">
