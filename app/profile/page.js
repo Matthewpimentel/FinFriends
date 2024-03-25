@@ -84,9 +84,9 @@ export default function Profile({ searchParams }) {
     const followingCount = userInfo ? userInfo[0].following.length : '';
     const followButton = userInfo && userId ? (
         userInfo[0].followers.includes(userId.userId) ? ( // Check if the logged-in user is already following
-            <button className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Unfollow</button>
+            <button className="bg-gray-900 text-white px-1 py-1 rounded-md md:px-3 md:py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Unfollow</button>
         ) : (
-            <button className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Follow</button>
+            <button className="bg-gray-900 text-white px-1 py-1 rounded-md md:px-3 md:py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Follow</button>
         )
     ) : null;
     
@@ -94,32 +94,31 @@ export default function Profile({ searchParams }) {
         <div>
             <Nav />
             <div className='flex justify-center flex-col items-center v-screen'>
-
                 <div className="flex justify-center">
                     <div className="flex flex-row items-center justify-center">
-                        <div className='m-8'>
-                            <img className="h-30 w-30 rounded-full" src={profilePicture} alt={username} />
+                        <div className='m-2'>
+                            <img className="h-8 w-8  md:h-32 md:w-32 md:mr-4 rounded-full" src={profilePicture} alt={username} />
                         </div>
                         <div>
                             <div className='flex flex-row items-center'>
-                                <h1 className='mb-8'>{username}</h1>
+                                <h1 className='text-base md:text-lg mr-2'>{username}</h1>
                                 {followButton}
                             </div>
                             <div className="flex flex-row items-center justify-center">
-                                <h3 className='mr-12'>{posts.length} Posts</h3>
-                                <h3 className='mr-12'>{`${followersCount} Followers`}</h3>
-                                <h3 className='mr-12'>{`${followingCount} Following`}</h3>
+                                <h3 className='mr-2 text-xs md:text-base'>{posts.length} Posts</h3>
+                                <h3 className='mr-2 text-xs md:text-base'>{`${followersCount} Followers`}</h3>
+                                <h3 className='mr-2 text-xs md:text-base'>{`${followingCount} Following`}</h3>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div className='border-t-4 w-6/12 border-gray-800'>
-                    <div className="grid grid-cols-3 justify-center">
+                <div className='border-t-4 w-11/12  md:w-6/12 border-gray-800'>
+                    <div className="grid grid-cols-2 md:grid-cols-3 justify-center">
                         {posts.map((post) => (
                             <div key={post.id} className="m-2">
                                 <img
                                     src={post.imageurls[0]}
-                                    className="h-96 w-96 object-cover rounded-lg" // Set fixed height and width
+                                    className="md:h-96 md:w-96 h-32 w-32 object-cover rounded-lg" // Set fixed height and width
                                     alt={`Post Image ${post.id}`}
                                 />
                             </div>
