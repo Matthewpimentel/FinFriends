@@ -238,7 +238,7 @@ const Feed = () => {
                     <Link href={{
                   pathname: "/profile",
                   query: {
-                    userId: comment.commenter.commenterId
+                    userId: comment.commenterId
                   },
                 }}>
                       <div className='flex items-center'>
