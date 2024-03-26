@@ -20,6 +20,7 @@ export default function Profile({ searchParams }) {
     }, [user]);
 
     const fetchPosts = async () => {
+        console.log(searchParams)
         if (!searchParams.userId) {
             try {
                 if (user && user.email) {

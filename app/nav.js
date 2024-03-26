@@ -20,8 +20,6 @@ export default function Nav() {
         router.reload();
     };
 
-    console.log(question)
-
     const toggleMenu = () => {
         if (isMobileMenuOpen) {
             setIsMobileMenuOpen(false)
