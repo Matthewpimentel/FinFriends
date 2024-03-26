@@ -6,8 +6,6 @@ const Search = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
 
-    const router = useRouter()
-
     const handleSearch = async (query) => {
         setSearchQuery(query); // Update search query state
 
@@ -34,7 +32,7 @@ const Search = () => {
             />
 
             {/* Display search results */}
-            <div className='flex fixed  bg-gray-800 w-3/12'>
+            <div className='flex fixed z-10 bg-gray-800 w-7/12'>
                 <ul>
                     {searchResults.map(user => (
                         <Link key={user.id} href={{
@@ -43,8 +41,8 @@ const Search = () => {
                                 userId: user.id
                             },
                         }}>
-                            <div key={user.id} className='flex flex-row items-center cursor-pointer mt-2'>
-                                <img className='rounded-full m-2 md:h-10 md:w-10" alt="Profile Picture' src={user.profilepicture} />
+                            <div key={user.id} className='flex flex-row items-center cursor-pointer mt-2 block'>
+                                <img className='rounded-full m-2 h-8 h-10 w-10" alt="Profile Picture' src={user.profilepicture} />
                                 <li>{user.username}</li>
                             </div>
                         </Link>
