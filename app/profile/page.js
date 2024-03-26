@@ -4,12 +4,14 @@ import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Nav from '../nav';
 import LoadingBar from '../Components/LoadingBar';
+import { useSearchParams } from 'next/navigation'
 
-export default function Profile({ searchParams }) {
+export default function Profile({}) {
     const { user, error, isLoading } = useUser();
     const [posts, setPosts] = useState([]);
     const [userInfo, setUserInfo] = useState(null); // Initialize userInfo as null
     const [userId, setUserId] = useState();
+    const searchParams = useSearchParams()
 
     useEffect(() => {
 
@@ -20,8 +22,7 @@ export default function Profile({ searchParams }) {
     }, [user]);
 
     const fetchPosts = async () => {
-        console.log(searchParams)
-        if (!searchParams.userId) {
+        if (!searchParams.get("userId")) {
             try {
                 if (user && user.email) {
                     const response = await axios.get("/api/get-user-posts", {
@@ -39,7 +40,7 @@ export default function Profile({ searchParams }) {
             try {
                 const response = await axios.get("/api/get-other-user-posts", {
                     params: {
-                        userId: searchParams.userId
+                        userId: searchParams.get("userId")
                     },
                 });
                 setPosts(response.data.posts.rows);
@@ -64,7 +65,7 @@ export default function Profile({ searchParams }) {
         try {
              // This may still log the previous value of userId due to asynchronous state updates
             await axios.post("/api/follow-user", {
-                followerId: searchParams.userId,
+                followerId: searchParams.get("userId"),
                 userId: userId.userId // Use the response data directly
             });
         } catch(error) {
