@@ -9,8 +9,7 @@ import BottomMobileBar from './Components/BottomMobileBar';
 import TopMobileNav from './Components/TopMobileNav';
 import { IoFishOutline } from "react-icons/io5";
 import LoadingBar from './Components/LoadingBar';
-
-
+import question from './images/Question.png'
 
 export default function Nav() {
     const { user, error, isLoading } = useUser();
@@ -20,6 +19,8 @@ export default function Nav() {
     const handleRefresh = () => {
         router.reload();
     };
+
+    console.log(question)
 
     const toggleMenu = () => {
         if (isMobileMenuOpen) {
@@ -78,9 +79,9 @@ export default function Nav() {
                                         <span className="absolute -inset-1.5"></span>
                                         <span className="sr-only">Open user menu</span>
                                         {user ? (
-                                            <img className="h-8 w-8 rounded-full" src={user.picture} alt={user.name} />
+                                            <img className="h-8 w-8  rounded-full" src={user.picture} alt={user.name} />
                                         ) : (
-                                            <img className="h-8 w-8 rounded-full" />
+                                            <img className="h-8 w-8 border rounded-full" src={question.src} />
                                         )}
                                     </button>
                                 </div>

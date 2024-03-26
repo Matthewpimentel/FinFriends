@@ -1,7 +1,7 @@
 import { sql } from '@vercel/postgres';
 import { NextResponse } from 'next/server';
 
-export async function GET(request) {
+export async function GET() {
     try {
         // Fetch up to 15 posts sorted by likes
         const allPostsResult = await sql`
@@ -47,8 +47,6 @@ export async function GET(request) {
                 }
             }
         }
-
-
         // Return the JSON response with up to 15 posts
         return NextResponse.json({ posts }, { status: 200 });
     } catch (error) {
