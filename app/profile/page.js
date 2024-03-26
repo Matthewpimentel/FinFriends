@@ -5,24 +5,28 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import Nav from '../nav';
 import LoadingBar from '../Components/LoadingBar';
 import { useSearchParams } from 'next/navigation'
+import { Suspense } from 'react'
 
 export default function Profile() {
     const { user, error, isLoading } = useUser();
     const [posts, setPosts] = useState([]);
     const [userInfo, setUserInfo] = useState(null); // Initialize userInfo as null
     const [userId, setUserId] = useState();
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
 
     useEffect(() => {
-
-        fetchPosts();
         if(user) {
+            fetchPosts();
             getUserId();
         }
     }, [user]);
 
     const fetchPosts = async () => {
-        if (!searchParams.get("userId")) {
+        let search;
+        if (searchParams) {
+            search = searchParams.get("userId");
+        }
+        if (!search) {
             try {
                 if (user && user.email) {
                     const response = await axios.get("/api/get-user-posts", {
@@ -35,12 +39,11 @@ export default function Profile() {
             } catch (error) {
                 console.error('Error fetching posts:', error.response.data);
             }
-        }
-        else {
+        } else {
             try {
                 const response = await axios.get("/api/get-other-user-posts", {
                     params: {
-                        userId: searchParams.get("userId")
+                        userId: search
                     },
                 });
                 setPosts(response.data.posts.rows);
@@ -62,32 +65,30 @@ export default function Profile() {
     }
 
     const getUserIdAndFollow = async () => {
+        let search;
+        if (searchParams) {
+            search = searchParams.get("userId");
+        }
         try {
-             // This may still log the previous value of userId due to asynchronous state updates
             await axios.post("/api/follow-user", {
-                followerId: searchParams.get("userId"),
+                followerId: search,
                 userId: userId.userId // Use the response data directly
             });
         } catch(error) {
-            console.error("Error following/unfollowing", error.response);
+            console.error("Error following/unfollowing", error);
         }
         fetchPosts();
     };
 
-    
-    
-
     if (isLoading) return <LoadingBar/>;
-    if (error) return <div>{error.message}</div>;
+    if (!user || error) return <div>{error ? error.message : 'User not found'}</div>;
 
     // Conditional rendering based on userInfo availability
     const profilePicture = userInfo ? userInfo[0].profilepicture : (user ? user.picture : '');
     const username = userInfo ? userInfo[0].username : (user ? user.nickname : '');
     const followersCount = userInfo && userInfo[0]?.followers ? userInfo[0].followers.length : 0;
-
     const followingCount = userInfo && userInfo[0]?.following ? userInfo[0].following.length : 0;
 
-    
     const followButton = userInfo && userId ? (
         userInfo[0]?.followers?.includes(userId.userId) ? ( // Check if the logged-in user is already following
             <button className="bg-gray-900 text-white px-1 py-1 rounded-md md:px-3 md:py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Unfollow</button>
@@ -99,6 +100,7 @@ export default function Profile() {
     return (
         <div>
             <Nav />
+            <Suspense fallback={<LoadingBar />}>
             <div className='flex justify-center flex-col items-center v-screen'>
                 <div className="flex justify-center">
                     <div className="flex flex-row items-center justify-center">
@@ -132,6 +134,7 @@ export default function Profile() {
                     </div>
                 </div>
             </div>
+            </Suspense>
         </div>
     );
 }
