@@ -32,9 +32,7 @@ export default function Nav() {
     if (error) return <div>{error.message}</div>;
     return (
         <nav class="bg-gray-800">
-            <div className="">
                 <TopMobileNav/>
-            </div>
             <div class="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8 hidden md:block">
                 <div class="relative flex h-16 items-center justify-between">
                     <div class="absolute inset-y-0 left-0 flex items-center sm:hidden">
