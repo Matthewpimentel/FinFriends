@@ -81,8 +81,11 @@ export default function Profile({ searchParams }) {
     // Conditional rendering based on userInfo availability
     const profilePicture = userInfo ? userInfo[0].profilepicture : (user ? user.picture : '');
     const username = userInfo ? userInfo[0].username : (user ? user.nickname : '');
-    const followersCount = userInfo ? userInfo[0].followers.length : '';
-    const followingCount = userInfo ? userInfo[0].following.length : '';
+    const followersCount = userInfo && userInfo[0]?.followers ? userInfo[0].followers.length : 0;
+
+    const followingCount = userInfo && userInfo[0]?.following ? userInfo[0].following.length : 0;
+
+    
     const followButton = userInfo && userId ? (
         userInfo[0].followers.includes(userId.userId) ? ( // Check if the logged-in user is already following
             <button className="bg-gray-900 text-white px-1 py-1 rounded-md md:px-3 md:py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Unfollow</button>
