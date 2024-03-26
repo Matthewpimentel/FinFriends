@@ -6,7 +6,7 @@ import Nav from '../nav';
 import LoadingBar from '../Components/LoadingBar';
 import { useSearchParams } from 'next/navigation'
 
-export default function Profile({}) {
+export default function Profile() {
     const { user, error, isLoading } = useUser();
     const [posts, setPosts] = useState([]);
     const [userInfo, setUserInfo] = useState(null); // Initialize userInfo as null
