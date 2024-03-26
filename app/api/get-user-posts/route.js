@@ -6,6 +6,8 @@ export async function GET(request) {
         const urlParams = new URLSearchParams(request.url.split('?')[1]);
         const email = urlParams.get('email');
 
+        console.log(email);
+
         if (!email) {
             throw new Error('Email parameter is missing in the request');
         }

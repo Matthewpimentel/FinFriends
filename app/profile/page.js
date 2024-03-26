@@ -17,7 +17,7 @@ export default function Profile({ searchParams }) {
         if(user) {
             getUserId();
         }
-    }, []);
+    }, [user]);
 
     const fetchPosts = async () => {
         if (!searchParams.userId) {
@@ -87,7 +87,7 @@ export default function Profile({ searchParams }) {
 
     
     const followButton = userInfo && userId ? (
-        userInfo[0].followers.includes(userId.userId) ? ( // Check if the logged-in user is already following
+        userInfo[0]?.followers?.includes(userId.userId) ? ( // Check if the logged-in user is already following
             <button className="bg-gray-900 text-white px-1 py-1 rounded-md md:px-3 md:py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Unfollow</button>
         ) : (
             <button className="bg-gray-900 text-white px-1 py-1 rounded-md md:px-3 md:py-2 text-sm font-medium" onClick={(e) => getUserIdAndFollow()}>Follow</button>

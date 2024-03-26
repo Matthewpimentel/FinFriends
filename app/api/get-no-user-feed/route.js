@@ -48,7 +48,6 @@ export async function GET(request) {
             }
         }
 
-        console.log(posts)
 
         // Return the JSON response with up to 15 posts
         return NextResponse.json({ posts }, { status: 200 });
