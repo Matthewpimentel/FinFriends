@@ -4,8 +4,6 @@ import { NextResponse } from 'next/server';
 export async function POST(request) {
   const { name, email, username, profilepicture } = await request.json(); // Parse JSON body
 
-console.log(username);
-
   try {
     if (!name || !email || !username || !profilepicture) throw new Error('Name and Email required');
 
