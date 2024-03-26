@@ -171,8 +171,6 @@ const Feed = () => {
     setShowFullDescription(!showFullDescription);
   };
 
-  console.log(feed);
-
   return (
     <main className="">
       <div className='flex flex-col justify-center items-center'>

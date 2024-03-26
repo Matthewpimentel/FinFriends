@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import Nav from '../nav';
+import LoadingBar from '../Components/LoadingBar';
 
 export default function Profile({ searchParams }) {
     const { user, error, isLoading } = useUser();
@@ -74,7 +75,7 @@ export default function Profile({ searchParams }) {
     
     
 
-    if (isLoading) return <div>Loading...</div>;
+    if (isLoading) return <LoadingBar/>;
     if (error) return <div>{error.message}</div>;
 
     // Conditional rendering based on userInfo availability
@@ -112,7 +113,7 @@ export default function Profile({ searchParams }) {
                         </div>
                     </div>
                 </div>
-                <div className='border-t-4 w-11/12  md:w-6/12 border-gray-800'>
+                <div className='border-t-4 w-11/12 md:w-6/12 border-gray-800'>
                     <div className="grid grid-cols-2 md:grid-cols-3 justify-center">
                         {posts.map((post) => (
                             <div key={post.id} className="m-2">

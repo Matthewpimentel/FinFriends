@@ -1,11 +1,11 @@
 import Search from "./Search";
-
+import { IoFishOutline } from "react-icons/io5";
 const TopMobileNav = () => {
     return (
         <div className="md:hidden flex justify-between items-center">
-            <img className="h-8 w-auto ml-2" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+            <IoFishOutline size={35} className="ml-4"/>
             <div className="flex-grow flex justify-center">
-                <Search />
+                <Search/>
             </div>
         </div>
     );

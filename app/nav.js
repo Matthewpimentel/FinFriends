@@ -5,9 +5,11 @@ import { useState } from 'react';
 import Link from "next/link"
 import Search from './Components/Search';
 import { useRouter } from 'next/navigation';
-import { GoHome } from "react-icons/go";
 import BottomMobileBar from './Components/BottomMobileBar';
 import TopMobileNav from './Components/TopMobileNav';
+import { IoFishOutline } from "react-icons/io5";
+import LoadingBar from './Components/LoadingBar';
+
 
 
 export default function Nav() {
@@ -28,7 +30,7 @@ export default function Nav() {
         }
     }
 
-    if (isLoading) return <div className='flex justify-center items-center'>Loading...</div>;
+    if (isLoading) return <LoadingBar/>;
     if (error) return <div>{error.message}</div>;
     return (
         <nav class="bg-gray-800">
@@ -39,7 +41,7 @@ export default function Nav() {
                     </div>
                     <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
                         <div class="flex flex-shrink-0 items-center">
-                            <img class="h-8 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=500" alt="Your Company" />
+                            <IoFishOutline size={35}/>
                         </div>
                         <div class="hidden sm:ml-6 sm:block">
                             <div class="flex space-x-4">

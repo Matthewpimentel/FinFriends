@@ -1,11 +1,12 @@
 'use client';
 
 import { useUser } from '@auth0/nextjs-auth0/client';
+import LoadingBar from '../Components/LoadingBar';
 
 export default function ProfileClient() {
   const { user, error, isLoading } = useUser();
 
-  if (isLoading) return <div>Loading...</div>;
+  if (isLoading) return <LoadingBar/>;
   if (error) return <div>{error.message}</div>;
 
   return (
