@@ -19,7 +19,6 @@ const Feed = () => {
   useEffect(() => {
     getFeed();
 
-    console.log(userId)
   }, [user]);
 
   const getFeed = async () => {
@@ -169,7 +168,7 @@ const Feed = () => {
                   </Link>
                   <FaCircle size={5} />
                   <h1 className='ml-1 mr-1 text-xs w-2/6 md:text-base'>{timeAgo(post.date_added)}</h1>
-                  {user && post.followers && post.followers.includes(userId)  ? (
+                  {user && post.followers && post.followers.includes(userId) ? (
                     <button className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={e => followUser(post.user_id)}>Following</button>
                   ) : user && (
                     <button className="bg-gray-900 text-white rounded-md px-3 py-2 text-sm font-medium" onClick={e => followUser(post.user_id)}>Follow</button>

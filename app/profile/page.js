@@ -16,9 +16,9 @@ export default function Profile() {
 
     useEffect(() => {
         if(user) {
-            fetchPosts();
             getUserId();
         }
+            fetchPosts();
     }, [user]);
 
     const fetchPosts = async () => {
@@ -81,7 +81,7 @@ export default function Profile() {
     };
 
     if (isLoading) return <LoadingBar/>;
-    if (!user || error) return <div>{error ? error.message : 'User not found'}</div>;
+    if (error) return <div>{error ? error.message : 'User not found'}</div>;
 
     // Conditional rendering based on userInfo availability
     const profilePicture = userInfo ? userInfo[0].profilepicture : (user ? user.picture : '');
