@@ -4,6 +4,8 @@ import { FaCamera } from "react-icons/fa6";
 import Nav from "../nav";
 import { useUser } from '@auth0/nextjs-auth0/client';
 import axios from "axios";
+import imageCompression from 'browser-image-compression';
+import { navigate } from '../actions/actions'
 
 export default function CreatePost() {
     const fileInputRefs = useRef([null, null, null, null]);
@@ -18,15 +20,28 @@ export default function CreatePost() {
 
     const handleFileChange = async (index, event) => {
         const file = event.target.files[0];
-        const image = URL.createObjectURL(file);
-        const updatedImages = [...selectedImages2];
-        updatedImages[index] = image;
-        setSelectedImages2(updatedImages);
+        
+        try {
+            const options = {
+                maxSizeMB: 1, // Max size in megabytes
+                maxWidthOrHeight: 800, // Max width or height in pixels
+                useWebWorker: true, // Use web worker for compression
+            };
     
-        // Update selectedImages to hold the file object
-        const updatedFileImages = [...selectedImages];
-        updatedFileImages[index] = file;
-        setSelectedImages(updatedFileImages);
+            const compressedFile = await imageCompression(file, options);
+            const compressedImage = URL.createObjectURL(compressedFile);
+    
+            const updatedImages = [...selectedImages2];
+            updatedImages[index] = compressedImage;
+            setSelectedImages2(updatedImages);
+    
+            // Update selectedImages to hold the compressed file object
+            const updatedFileImages = [...selectedImages];
+            updatedFileImages[index] = compressedFile;
+            setSelectedImages(updatedFileImages);
+        } catch (error) {
+            console.error('Error compressing image:', error);
+        }
     };
 
     const addPost = async () => {
@@ -41,7 +56,6 @@ export default function CreatePost() {
                 selectedImages.forEach((image, index) => {
                     if (image !== null) {
                         formData.append(`images`, image);
-                        console.log(image);
                     }
                 });
                 
@@ -52,6 +66,7 @@ export default function CreatePost() {
                     }
                 });
                 console.log('Post added successfully');
+                navigate();
             } catch (error) {
                 console.error('Error adding post:', error.response);
             }
