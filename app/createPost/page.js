@@ -6,6 +6,8 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 import axios from "axios";
 import imageCompression from 'browser-image-compression';
 import { navigate } from '../actions/actions'
+import ConfirmPostAdding from '../Components/ConfirmPostAdding';
+import LoadingBar from '../Components/LoadingBar';
 
 export default function CreatePost() {
     const fileInputRefs = useRef([null, null, null, null]);
@@ -13,6 +15,8 @@ export default function CreatePost() {
     const { user, error, isLoading } = useUser();
     const [description, setDescription] = useState("");
     const [selectedImages2, setSelectedImages2] = useState([null, null, null, null]);
+    const [addPostLoading, setAddPostLoading] = useState(false);
+    const [confirmPost, setConfirmPost] = useState(false)
 
     const handleCameraClick = (index) => {
         fileInputRefs.current[index].click();
@@ -45,6 +49,7 @@ export default function CreatePost() {
     };
 
     const addPost = async () => {
+        setAddPostLoading(true);
         const formData = new FormData();
         if (user) {
             try {
@@ -66,14 +71,23 @@ export default function CreatePost() {
                     }
                 });
                 console.log('Post added successfully');
+                setAddPostLoading(false);
+                setConfirmPost(true);
+                await sleep(2000);
+                setConfirmPost(false);
                 navigate();
             } catch (error) {
                 console.error('Error adding post:', error.response);
             }
         }
     }
-    
 
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+      }
+    
+    if (addPostLoading) return <LoadingBar/>
+    if (confirmPost) return <ConfirmPostAdding/>
     return (
         <div className='mb-20'>
             <Nav />
