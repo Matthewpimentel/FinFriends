@@ -23,8 +23,8 @@ export default function CreatePost() {
         
         try {
             const options = {
-                maxSizeMB: 1, // Max size in megabytes
-                maxWidthOrHeight: 800, // Max width or height in pixels
+                maxSizeMB: 4.5, // Max size in megabytes
+                maxWidthOrHeight: 1600, // Max width or height in pixels
                 useWebWorker: true, // Use web worker for compression
             };
     
