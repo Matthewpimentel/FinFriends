@@ -19,7 +19,7 @@ export default function Profile() {
             getUserId();
         }
             fetchPosts();
-    }, [user]);
+    }, [user, searchParams]);
 
     const fetchPosts = async () => {
         let search;
