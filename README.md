@@ -1,5 +1,10 @@
 # FinFriends (In Development)
 
+## Link And Test Account Info
+- https://fin-friends-ashy.vercel.app/
+- Email: finfriendtest1@gmail.com
+- Password: fwXQC61ul6jX
+
 ## Overview
 FinFriends is a social media platform designed for aquarium and fish enthusiasts. It provides a centralized space for users to share photos of their aquarium setups, ask questions about fishkeeping, and connect with other hobbyists to exchange knowledge and experiences.
 
