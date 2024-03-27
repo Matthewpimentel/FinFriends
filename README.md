@@ -1,7 +1,8 @@
 # FinFriends (In Development)
 
-## Link And Test Account Info
-- https://fin-friends-ashy.vercel.app/
+## Links And Test Account Info
+- Live Site: https://fin-friends-ashy.vercel.app/
+- Trello Board: https://trello.com/b/twqtAA6e/finfriends
 - Email: finfriendtest1@gmail.com
 - Password: fwXQC61ul6jX
 
