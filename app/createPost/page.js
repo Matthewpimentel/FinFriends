@@ -60,7 +60,7 @@ export default function CreatePost() {
     
 
     return (
-        <div>
+        <div className='mb-20'>
             <Nav />
             <input
                 ref={el => fileInputRefs.current[0] = el}
